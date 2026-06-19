@@ -59,7 +59,7 @@ export default function AuthPage() {
           </div>
           <h2 className="text-2xl font-bold">{isLogin ? "Welcome back" : "Create an account"}</h2>
           <p className="text-muted-foreground text-sm mt-1">
-            {isLogin ? "Enter your details to access your wallet" : "Start sending money with PayPal Clone"}
+            {isLogin ? "Enter your details to access your wallet" : "Start sending money with AtlasPay"}
           </p>
         </div>
 

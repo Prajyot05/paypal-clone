@@ -41,4 +41,14 @@ public class KafkaEventProducer {
             return null;
         });
     }
+
+    public void sendRawJson(String topic, String key, String jsonPayload) {
+        try {
+            // Our outbox saves JSON. We parse it back into the DTO to send via the configured JsonSerializer
+            TransactionEvent event = objectMapper.readValue(jsonPayload, TransactionEvent.class);
+            kafkaTemplate.send(topic, key, event);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to deserialize Outbox JSON payload", e);
+        }
+    }
 }

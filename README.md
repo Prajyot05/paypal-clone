@@ -1,15 +1,15 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/96/000000/paypal.png" alt="PayPal Logo"/>
-  <h1>Enterprise-Grade PayPal Clone</h1>
-  <p>A production-ready distributed payment system built with <b>Java 21</b>, <b>Spring Boot</b>, and <b>Kafka</b>.</p>
+  <img src="https://img.icons8.com/color/96/000000/globe-earth.png" alt="AtlasPay Logo"/>
+  <h1>AtlasPay: Distributed Payment Processing System</h1>
+  <p>An enterprise-grade, event-driven payment infrastructure built with <b>Java 21</b>, <b>Spring Boot</b>, <b>gRPC</b>, and <b>Kafka</b>.</p>
 
   <p>
     <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
     <img src="https://img.shields.io/badge/Spring_Boot-3.2+-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+    <img src="https://img.shields.io/badge/gRPC-244C5A?style=for-the-badge&logo=grpc&logoColor=white" />
     <img src="https://img.shields.io/badge/Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white" />
     <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" />
     <img src="https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white" />
-    <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=next.js&logoColor=white" />
   </p>
 </div>
 
@@ -17,66 +17,60 @@
 
 ## 📖 Overview
 
-This repository is not just a CRUD application. It is a highly scalable, distributed microservices architecture designed to tackle the hardest engineering problems in financial systems: **Concurrency**, **Idempotency**, and **Distributed Transactions**.
+AtlasPay is a highly scalable, distributed microservices architecture designed to tackle the hardest engineering problems in financial systems: **Concurrency**, **Idempotency**, and **Distributed Transactions**.
 
-Built as a full-stack monorepo, the backend relies on an event-driven architecture using Kafka, while the frontend provides a sleek, modern UI built with Next.js and Tailwind CSS to vividly demonstrate real-time eventual consistency.
+It relies on a hybrid communication model, utilizing **gRPC** for low-latency internal service-to-service communication, and REST for client-facing API Gateway routing. The system achieves true eventual consistency using an event-driven architecture powered by Kafka and the Transactional Outbox pattern.
 
 ## 🧠 Core Engineering Achievements
 
-This project was built to demonstrate an understanding of complex distributed system patterns commonly required at top-tier tech companies like Google.
+### 1. Hybrid API: REST + gRPC with Protocol Buffers
+To satisfy modern microservice performance requirements:
+* External clients (Frontend, Mobile) communicate with the API Gateway via standard REST JSON APIs.
+* **Internal services communicate via gRPC.** For example, the `transaction-service` validates users against the `user-service` synchronously via highly efficient, binary Protocol Buffers. This hybrid approach allows public clients to use standard web protocols while internal infrastructure runs at maximum throughput.
 
-### 1. Distributed Transactions (Saga Pattern)
-Financial systems cannot afford the locking overhead of 2-Phase Commits (2PC). This system implements the **Choreography-based Saga Pattern** using Apache Kafka. 
-* When a user initiates a transfer, the `transaction-service` creates a `PENDING` record.
-* It publishes a `txn-initiated` event to Kafka.
-* The `wallet-service` consumes this event, processes the transfer atomically, and responds with a `txn-completed` or `txn-failed` event.
-* The frontend polls the transaction status, providing a beautiful visual representation of eventual consistency.
+### 2. Distributed Transactions (Saga Pattern) & Outbox Pattern
+Financial systems cannot afford the locking overhead of 2-Phase Commits (2PC) or the data loss of dual-write failures.
+* **Transactional Outbox Pattern:** When a transaction is saved to Postgres, an event is atomically saved to an `Outbox` table. A Polling Publisher reads this table and guarantees At-Least-Once delivery to Kafka, bypassing complex Debezium CDC requirements while maintaining data integrity.
+* **Choreography Saga:** The `transaction-service` acts as the orchestrator. It waits for asynchronous Kafka events from both the `wallet-service` (funds transferred) and the `fraud-service` (velocity checked) before finalizing a transaction.
 
-### 2. Concurrency Control & Race Condition Prevention
-Preventing deadlocks and race conditions during simultaneous money transfers is critical. The `wallet-service` utilizes **Pessimistic Locking** (`SELECT FOR UPDATE`) at the database level (`@Lock(LockModeType.PESSIMISTIC_WRITE)`).
-* Sender and receiver rows are locked in a deterministic, consistent order to completely eliminate the possibility of database deadlocks when concurrent transfers occur between the same users.
+### 3. Fault Tolerance with Resilience4j
+Google loves reliability. To prevent cascading failures across the distributed system, all synchronous gRPC calls are wrapped with **Resilience4j**.
+* **Circuit Breakers** halt requests to failing downstream services.
+* **Timeouts & Retries** gracefully handle transient network jitter, providing fallback mechanisms to maintain system uptime.
 
-### 3. Absolute Idempotency via Redis
-Network retries or a user double-clicking the "Send" button should never result in a double charge. 
-* The frontend generates a unique `UUID` for every transfer request.
-* The API Gateway forwards this `Idempotency-Key` to the `transaction-service`.
-* The service uses **Redis `setIfAbsent` (SET NX)** to acquire a distributed lock on that specific key. Duplicate requests are intercepted instantly at the cache layer and rejected, ensuring exactly-once processing.
-
-### 4. Microservice Security & Rate Limiting
-* **Spring Cloud Gateway** acts as the single entry point.
-* It implements a global **JWT Authentication Filter** that intercepts and validates tokens, forwarding the user identity (`X-Authenticated-User`) to downstream microservices.
-* **Redis-backed Rate Limiting** is applied globally at the API Gateway level to mitigate DDoS attacks and API abuse using the Token Bucket algorithm.
+### 4. Concurrency Control & Absolute Idempotency
+* **Pessimistic Locking:** The `wallet-service` utilizes `SELECT FOR UPDATE` (`@Lock(LockModeType.PESSIMISTIC_WRITE)`) to lock sender and receiver rows deterministically, entirely preventing deadlocks during concurrent transfers.
+* **Redis Idempotency:** The frontend generates a unique `Idempotency-Key` (UUID) per request. The `transaction-service` uses Redis `SET NX` to acquire a distributed lock, ensuring exactly-once processing even if the client retries the request.
 
 ## 🏗️ System Architecture
 
-The ecosystem consists of 5 independent microservices utilizing the Database-per-Service pattern.
+The ecosystem consists of 7 independent microservices utilizing the Database-per-Service pattern.
 
-1. **`api-gateway` (Port 8080):** Spring Cloud Gateway for routing, auth, and rate limiting.
-2. **`user-service` (Port 8081):** Manages user registration/authentication. Has its own Postgres DB.
-3. **`wallet-service` (Port 8083):** Manages user balances and maintains an append-only `WalletLedgerEntry` for double-entry bookkeeping.
-4. **`transaction-service` (Port 8082):** Orchestrates the Saga pattern and handles Redis idempotency.
-5. **`notification-service` (Port 8084):** Consumes Kafka events asynchronously to dispatch notifications without blocking the main transaction flow.
-6. **`frontend`:** Next.js (App Router) web app running on port 3000.
+1. **`api-gateway` (Port 8080):** Spring Cloud Gateway for routing, JWT auth, and Redis Token Bucket rate limiting.
+2. **`user-service` (Port 8081):** Manages auth. Exposes a gRPC server for internal validation.
+3. **`transaction-service` (Port 8082):** Orchestrates Sagas, runs Outbox publisher, and uses Resilience4j gRPC clients.
+4. **`wallet-service` (Port 8083):** Manages double-entry ledger bookkeeping.
+5. **`fraud-service` (Port 8085):** Consumes Kafka events, runs Redis velocity checks, and blocks suspicious transactions.
+6. **`analytics-service` (Port 8086):** Consumes all events to maintain throughput and volume metrics.
+7. **`notification-service` (Port 8084):** Async email dispatcher.
 
 ## 🚀 How to Run Locally
 
 ### Prerequisites
 * Docker & Docker Compose
-* Java 21+
-* Node.js & npm
+* Java 21+ & Maven
 
 ### 1. Start Infrastructure
-The `docker-compose.yml` file contains all necessary infrastructure (Kafka, Zookeeper, Redis, PostgreSQL, Zipkin, Prometheus).
 ```bash
 docker-compose up -d
 ```
 
 ### 2. Build and Run the Backend
-Ensure your `JAVA_HOME` is set to Java 21, then compile all microservices:
 ```bash
+export JAVA_HOME=$(/usr/libexec/java_home -v 21)
 mvn clean install -DskipTests
 ```
-Start all 5 microservices. You can do this via your IDE or by running `mvn spring-boot:run` inside each respective module folder (`user-service`, `api-gateway`, etc).
+Start all 7 Spring Boot microservices.
 
 ### 3. Start the Frontend
 ```bash
@@ -85,6 +79,3 @@ npm install
 npm run dev
 ```
 Navigate to **http://localhost:3000** in your browser.
-
-## 📜 License
-This project is licensed under the MIT License.

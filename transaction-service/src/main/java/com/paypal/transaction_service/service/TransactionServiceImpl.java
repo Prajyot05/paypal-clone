@@ -2,8 +2,10 @@ package com.paypal.transaction_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paypal.transaction_service.entity.Transaction;
+import com.paypal.transaction_service.entity.OutboxEvent;
 import com.paypal.transaction_service.kafka.KafkaEventProducer;
 import com.paypal.transaction_service.repository.TransactionRepository;
+import com.paypal.transaction_service.repository.OutboxEventRepository;
 import com.paypal.common.dto.TransactionEvent;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,15 +18,18 @@ import java.util.List;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository repository;
+    private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
     private final IdempotencyService idempotencyService;
     private final KafkaEventProducer kafkaEventProducer;
 
     public TransactionServiceImpl(TransactionRepository repository,
+            OutboxEventRepository outboxEventRepository,
             KafkaEventProducer kafkaEventProducer,
             ObjectMapper objectMapper,
             IdempotencyService idempotencyService) {
         this.repository = repository;
+        this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
         this.kafkaEventProducer = kafkaEventProducer;
         this.idempotencyService = idempotencyService;
@@ -67,23 +72,28 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction saved = repository.save(transaction);
         System.out.println("💾 Saved Transaction from DB: " + saved);
 
-        try {
-            TransactionEvent event = new TransactionEvent(
-                saved.getId(), 
-                saved.getSenderId(), 
-                saved.getReceiverId(), 
-                saved.getAmount(), 
-                "INITIATED", 
+        // Saga Orchestration: Create event payload
+        TransactionEvent event = new TransactionEvent(
+                saved.getId(),
+                saved.getSenderId(),
+                saved.getReceiverId(),
+                saved.getAmount(),
+                "INITIATED",
                 null
+        );
+
+        // Transactional Outbox Pattern: Save to outbox instead of sending directly
+        try {
+            String payload = objectMapper.writeValueAsString(event);
+            OutboxEvent outboxEvent = new OutboxEvent(
+                    "Transaction",
+                    String.valueOf(saved.getId()),
+                    "txn-initiated",
+                    payload
             );
-            
-            kafkaEventProducer.sendTransactionEvent(String.valueOf(saved.getId()), event);
-            System.out.println("🚀 Kafka message sent: txn-initiated");
+            outboxEventRepository.save(outboxEvent);
         } catch (Exception e) {
-            System.err.println("❌ Failed to send Kafka event: " + e.getMessage());
-            saved.setStatus("FAILED");
-            saved.setFailureReason("Failed to publish event to message broker");
-            repository.save(saved);
+            throw new RuntimeException("Failed to serialize transaction event to Outbox", e);
         }
 
         return saved;
