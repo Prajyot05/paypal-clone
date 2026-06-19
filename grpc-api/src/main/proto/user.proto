@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package com.atlaspay.grpc;
+
+option java_multiple_files = true;
+option java_package = "com.atlaspay.grpc.user";
+
+// The gRPC service for internal cross-service user validation.
+// You know it's getting serious when we switch from REST to gRPC for internal ops!
+service UserService {
+  // Validates if a user exists and returns their basic status.
+  rpc ValidateUser (ValidateUserRequest) returns (ValidateUserResponse);
+}
+
+message ValidateUserRequest {
+  int64 userId = 1;
+}
+
+message ValidateUserResponse {
+  bool isValid = 1;
+  string errorMessage = 2; // Optional: explains why they aren't valid
+}

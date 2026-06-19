@@ -5,7 +5,7 @@ import java.util.List;
 import com.paypal.transaction_service.entity.Transaction;
 
 public interface TransactionService {
-    Transaction createTransaction(Transaction transaction);
+    Transaction initiateTransfer(Transaction transaction, String idempotencyKey);
 
     List<Transaction> getAllTransactions();
     

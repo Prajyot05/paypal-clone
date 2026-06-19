@@ -10,6 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>grpc-api</module>
         <module>common-lib</module>
         <module>user-service</module>
         <module>wallet-service</module>
