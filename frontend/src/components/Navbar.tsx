@@ -19,8 +19,8 @@ export function Navbar() {
     <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center space-x-2">
-          <Wallet className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          <span className="font-bold tracking-tight text-xl">PayPal<span className="text-blue-600 dark:text-blue-400">Clone</span></span>
+          <Wallet className="h-6 w-6 text-blue-800 dark:text-blue-400" />
+          <span className="font-extrabold tracking-tight text-xl">AtlasPay</span>
         </Link>
         
         <div className="flex items-center space-x-6">
@@ -37,7 +37,7 @@ export function Navbar() {
               </div>
             </>
           ) : (
-            <Link href="/auth" className="text-sm font-medium bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors shadow-sm">
+            <Link href="/auth" className="text-sm font-semibold bg-blue-800 dark:bg-blue-600 text-white px-5 py-2 rounded hover:bg-blue-900 transition-colors">
               Log In
             </Link>
           )}
@@ -45,7 +45,7 @@ export function Navbar() {
           {mounted && (
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="p-2 rounded-full hover:bg-secondary/80 transition-colors"
+              className="p-2 rounded hover:bg-secondary/80 transition-colors"
               aria-label="Toggle theme"
             >
               {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

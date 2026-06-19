@@ -34,7 +34,7 @@ export default function LedgerPage() {
     }
   };
 
-  if (authLoading || loading) return <div className="flex items-center justify-center min-h-[50vh]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
+  if (authLoading || loading) return <div className="flex items-center justify-center min-h-[50vh]"><div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-blue-600"></div></div>;
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
@@ -50,12 +50,12 @@ export default function LedgerPage() {
           <input 
             type="text" 
             placeholder="Search reference IDs..." 
-            className="w-full md:w-64 pl-9 pr-4 py-2 rounded-md bg-card border border-input focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full md:w-64 pl-9 pr-4 py-2 rounded-sm bg-card border border-input focus:ring-2 focus:ring-blue-500 text-sm"
           />
         </div>
       </div>
 
-      <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-sm shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-secondary/50 text-muted-foreground uppercase text-xs">
@@ -81,7 +81,7 @@ export default function LedgerPage() {
                       {new Date(entry.timestamp).toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold tracking-wider ${
+                      <span className={`px-2.5 py-1 rounded-sm text-xs font-bold tracking-wider ${
                         entry.type === 'CREDIT' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'
                       }`}>
                         {entry.type}

@@ -17,6 +17,8 @@
         <module>transaction-service</module>
         <module>notification-service</module>
         <module>api-gateway</module>
+        <module>fraud-service</module>
+        <module>analytics-service</module>
     </modules>
 
     <properties>

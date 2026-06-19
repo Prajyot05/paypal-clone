@@ -118,11 +118,11 @@ export default function SendMoneyPage() {
               placeholder="Search by name or email..." 
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-md bg-card border border-input focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-4 py-2 rounded-sm bg-card border border-input focus:ring-2 focus:ring-blue-500"
             />
           </div>
           
-          <div className="border border-border rounded-lg overflow-hidden bg-card max-h-[400px] overflow-y-auto">
+          <div className="border border-border rounded-sm overflow-hidden bg-card max-h-[400px] overflow-y-auto">
             {filteredUsers.length === 0 ? (
               <div className="p-4 text-center text-sm text-muted-foreground">No users found.</div>
             ) : (
@@ -133,7 +133,7 @@ export default function SendMoneyPage() {
                     onClick={() => setSelectedUser(u)}
                     className={`p-3 cursor-pointer hover:bg-secondary/50 transition-colors flex items-center space-x-3 ${selectedUser?.id === u.id ? 'bg-blue-500/10 border-l-4 border-l-blue-500' : 'border-l-4 border-l-transparent'}`}
                   >
-                    <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center font-bold text-muted-foreground">
+                    <div className="h-10 w-10 rounded-sm bg-secondary flex items-center justify-center font-bold text-muted-foreground">
                       {u.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
@@ -151,12 +151,12 @@ export default function SendMoneyPage() {
         <div className="space-y-4">
           <h2 className="text-lg font-semibold border-b pb-2">2. Transfer Details</h2>
           
-          <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
+          <div className="bg-card border border-border rounded-sm p-6 shadow-sm">
             {txState === "IDLE" || txState === "SENDING" ? (
               <form onSubmit={handleSend} className="space-y-6">
                 {selectedUser ? (
-                  <div className="p-3 bg-secondary/50 rounded-lg flex items-center space-x-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold">
+                  <div className="p-3 bg-secondary/50 rounded-sm flex items-center space-x-3">
+                    <div className="h-10 w-10 rounded-sm bg-blue-500 text-white flex items-center justify-center font-bold">
                       {selectedUser.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
@@ -165,7 +165,7 @@ export default function SendMoneyPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="p-3 bg-secondary/30 rounded-lg text-sm text-muted-foreground text-center border border-dashed border-border">
+                  <div className="p-3 bg-secondary/30 rounded-sm text-sm text-muted-foreground text-center border border-dashed border-border">
                     Select a recipient first
                   </div>
                 )}
@@ -181,14 +181,14 @@ export default function SendMoneyPage() {
                       disabled={!selectedUser || txState === "SENDING"}
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
-                      className="w-full pl-7 pr-4 py-3 text-lg font-semibold rounded-md bg-background border border-input focus:ring-2 focus:ring-blue-500"
+                      className="w-full pl-7 pr-4 py-3 text-lg font-semibold rounded-sm bg-background border border-input focus:ring-2 focus:ring-blue-500"
                       placeholder="0.00"
                     />
                   </div>
                 </div>
 
                 {error && (
-                  <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm border border-destructive/20">
+                  <div className="p-3 rounded-sm bg-destructive/10 text-destructive text-sm border border-destructive/20">
                     {error}
                   </div>
                 )}
@@ -196,7 +196,7 @@ export default function SendMoneyPage() {
                 <button 
                   type="submit" 
                   disabled={!selectedUser || !amount || txState === "SENDING"}
-                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-md font-medium flex items-center justify-center transition-colors"
+                  className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:hover:bg-blue-600 text-white rounded-sm font-medium flex items-center justify-center transition-colors"
                 >
                   {txState === "SENDING" ? (
                     <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Initiating...</>
@@ -211,7 +211,7 @@ export default function SendMoneyPage() {
                 {txState === "PENDING" && (
                   <>
                     <div className="relative">
-                      <div className="h-16 w-16 rounded-full border-4 border-blue-100 border-t-blue-600 animate-spin"></div>
+                      <div className="h-16 w-16 rounded-sm border-4 border-blue-100 border-t-blue-600 animate-spin"></div>
                       <div className="absolute inset-0 flex items-center justify-center text-blue-600 font-bold">...</div>
                     </div>
                     <h3 className="text-xl font-bold">Processing</h3>
@@ -230,7 +230,7 @@ export default function SendMoneyPage() {
                     </p>
                     <button 
                       onClick={() => { setTxState("IDLE"); setAmount(""); }}
-                      className="mt-4 px-6 py-2 bg-secondary hover:bg-secondary/80 rounded-full text-sm font-medium transition-colors"
+                      className="mt-4 px-6 py-2 bg-secondary hover:bg-secondary/80 rounded-sm text-sm font-medium transition-colors"
                     >
                       Send Another
                     </button>
@@ -246,7 +246,7 @@ export default function SendMoneyPage() {
                     </p>
                     <button 
                       onClick={() => setTxState("IDLE")}
-                      className="mt-4 px-6 py-2 bg-secondary hover:bg-secondary/80 rounded-full text-sm font-medium transition-colors"
+                      className="mt-4 px-6 py-2 bg-secondary hover:bg-secondary/80 rounded-sm text-sm font-medium transition-colors"
                     >
                       Try Again
                     </button>

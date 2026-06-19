@@ -43,7 +43,7 @@ export default function DashboardPage() {
   };
 
   if (authLoading || loading) {
-    return <div className="flex items-center justify-center min-h-[50vh]"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
+    return <div className="flex items-center justify-center min-h-[50vh]"><div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-blue-600"></div></div>;
   }
 
   return (
@@ -55,8 +55,8 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Balance Card */}
-        <div className="col-span-1 md:col-span-2 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20"></div>
+        <div className="col-span-1 md:col-span-2 rounded-sm bg-gradient-to-br from-blue-600 to-blue-800 p-8 text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-sm blur-3xl -mr-20 -mt-20"></div>
           
           <div className="relative z-10 flex flex-col h-full justify-between">
             <div className="flex items-center space-x-2 opacity-80">
@@ -70,7 +70,7 @@ export default function DashboardPage() {
             </div>
             
             <div className="flex space-x-3">
-              <Link href="/send" className="bg-white text-blue-900 px-6 py-2.5 rounded-full font-medium flex items-center hover:bg-blue-50 transition-colors shadow-sm">
+              <Link href="/send" className="bg-white text-blue-900 px-6 py-2.5 rounded-sm font-medium flex items-center hover:bg-blue-50 transition-colors shadow-sm">
                 Send Money <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </div>
@@ -78,7 +78,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Stats Card */}
-        <div className="col-span-1 rounded-2xl bg-card border border-border p-6 shadow-sm flex flex-col justify-between">
+        <div className="col-span-1 rounded-sm bg-card border border-border p-6 shadow-sm flex flex-col justify-between">
           <div className="flex items-center space-x-2 text-muted-foreground mb-4">
             <Activity className="h-5 w-5" />
             <span className="font-medium">Account Status</span>
@@ -98,7 +98,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Recent Transactions */}
-      <div className="rounded-2xl bg-card border border-border shadow-sm overflow-hidden">
+      <div className="rounded-sm bg-card border border-border shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border flex justify-between items-center">
           <h2 className="text-xl font-bold flex items-center">
             <Clock className="h-5 w-5 mr-2 text-muted-foreground" /> Recent Transactions
@@ -117,7 +117,7 @@ export default function DashboardPage() {
               return (
                 <div key={txn.id} className="p-4 sm:p-6 flex items-center justify-between hover:bg-muted/50 transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${isSender ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+                    <div className={`h-10 w-10 rounded-sm flex items-center justify-center ${isSender ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
                       {isSender ? <ArrowUpRight className="h-5 w-5" /> : <ArrowDownLeft className="h-5 w-5" />}
                     </div>
                     <div>
@@ -125,7 +125,7 @@ export default function DashboardPage() {
                       <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-0.5">
                         <span>{new Date(txn.timestamp).toLocaleDateString()}</span>
                         <span>•</span>
-                        <span className={`px-2 py-0.5 rounded-full text-[10px] uppercase font-bold tracking-wider ${
+                        <span className={`px-2 py-0.5 rounded-sm text-[10px] uppercase font-bold tracking-wider ${
                           txn.status === 'SUCCESS' ? 'bg-green-500/10 text-green-500' : 
                           txn.status === 'FAILED' ? 'bg-red-500/10 text-red-500' : 
                           'bg-yellow-500/10 text-yellow-500'

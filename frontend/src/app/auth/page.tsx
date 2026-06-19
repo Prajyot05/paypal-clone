@@ -50,11 +50,11 @@ export default function AuthPage() {
   return (
     <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center p-4 relative overflow-hidden bg-background">
       {/* Decorative background elements */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-sm blur-[100px] -z-10 pointer-events-none"></div>
       
-      <div className="w-full max-w-md p-8 rounded-2xl bg-card border border-border shadow-xl backdrop-blur-sm relative z-10">
+      <div className="w-full max-w-md p-8 rounded-sm bg-card border border-border shadow-xl backdrop-blur-sm relative z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="h-12 w-12 bg-blue-600/10 rounded-full flex items-center justify-center mb-4 border border-blue-600/20">
+          <div className="h-12 w-12 bg-blue-600/10 rounded-sm flex items-center justify-center mb-4 border border-blue-600/20">
             <Wallet className="h-6 w-6 text-blue-600" />
           </div>
           <h2 className="text-2xl font-bold">{isLogin ? "Welcome back" : "Create an account"}</h2>
@@ -64,7 +64,7 @@ export default function AuthPage() {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
+          <div className="mb-6 p-3 rounded-sm bg-destructive/10 border border-destructive/20 text-destructive text-sm text-center">
             {error}
           </div>
         )}
@@ -78,7 +78,7 @@ export default function AuthPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3 py-2 rounded-md bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+                className="w-full px-3 py-2 rounded-sm bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
                 placeholder="John Doe"
               />
             </div>
@@ -90,7 +90,7 @@ export default function AuthPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 rounded-md bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full px-3 py-2 rounded-sm bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
               placeholder="john@example.com"
             />
           </div>
@@ -101,7 +101,7 @@ export default function AuthPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 rounded-md bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
+              className="w-full px-3 py-2 rounded-sm bg-background border border-input focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow"
               placeholder="••••••••"
             />
           </div>
@@ -109,7 +109,7 @@ export default function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors flex items-center justify-center mt-6 shadow-sm"
+            className="w-full py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-sm font-medium transition-colors flex items-center justify-center mt-6 shadow-sm"
           >
             {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : (isLogin ? "Sign In" : "Sign Up")}
           </button>

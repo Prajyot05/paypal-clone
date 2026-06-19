@@ -32,11 +32,11 @@ public class EventConsumer {
         }
     }
 
-    @KafkaListener(topics = "txn-initiated", groupId = "wallet-group")
+    @KafkaListener(topics = "txn-fraud-approved", groupId = "wallet-group")
     public void handleTransactionInitiated(String message) {
         try {
             TransactionEvent event = objectMapper.readValue(message, TransactionEvent.class);
-            System.out.println("📥 Received txn-initiated event for txn: " + event.getTransactionId());
+            System.out.println("📥 Received txn-fraud-approved event for txn: " + event.getTransactionId());
 
             boolean success = walletService.processTransfer(
                     event.getSenderId(), 
