@@ -3,6 +3,7 @@ package com.paypal.transaction_service.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import jakarta.validation.constraints.Positive;
 
 @Entity
@@ -22,7 +23,7 @@ public class Transaction {
 
     @Column(nullable = false)
     @Positive(message = "Amount must be positive")
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     private LocalDateTime timestamp;
@@ -30,17 +31,25 @@ public class Transaction {
     @Column(nullable = false)
     private String status;
 
+    @Column(unique = true, nullable = false)
+    private String idempotencyKey;
+
+    private String failureReason;
+
+    @Version
+    private Long version;
+
     public Transaction() {
     }
 
     public Transaction(Long senderId, Long receiverId,
-            String senderNameSnapshot, String receiverNameSnapshot,
-            Double amount, LocalDateTime timestamp, String status) {
+            BigDecimal amount, LocalDateTime timestamp, String status, String idempotencyKey) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.amount = amount;
         this.timestamp = timestamp;
         this.status = status;
+        this.idempotencyKey = idempotencyKey;
     }
 
     @PrePersist
@@ -78,11 +87,11 @@ public class Transaction {
         this.receiverId = receiverId;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -102,6 +111,30 @@ public class Transaction {
         this.status = status;
     }
 
+    public String getIdempotencyKey() {
+        return idempotencyKey;
+    }
+
+    public void setIdempotencyKey(String idempotencyKey) {
+        this.idempotencyKey = idempotencyKey;
+    }
+
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
+    }
+
     @Override
     public String toString() {
         return "Transaction{" +
@@ -111,6 +144,7 @@ public class Transaction {
                 ", amount=" + amount +
                 ", timestamp=" + timestamp +
                 ", status='" + status + '\'' +
+                ", idempotencyKey='" + idempotencyKey + '\'' +
                 '}';
     }
 }

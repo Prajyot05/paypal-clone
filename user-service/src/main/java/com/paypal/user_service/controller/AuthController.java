@@ -16,7 +16,9 @@ import com.paypal.user_service.dto.LoginRequest;
 import com.paypal.user_service.dto.SignupRequest;
 import com.paypal.user_service.entity.User;
 import com.paypal.user_service.repository.UserRepository;
-import com.paypal.user_service.util.JWTUtil;
+import com.paypal.common.util.JWTUtil;
+import com.paypal.user_service.kafka.KafkaEventProducer;
+import com.paypal.common.dto.UserCreatedEvent;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,11 +27,13 @@ public class AuthController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtil jwtUtil;
+    private final KafkaEventProducer kafkaEventProducer;
 
-    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil) {
+    public AuthController(UserRepository userRepository, PasswordEncoder passwordEncoder, JWTUtil jwtUtil, KafkaEventProducer kafkaEventProducer) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.kafkaEventProducer = kafkaEventProducer;
     }
 
     @PostMapping("/signup")
@@ -43,7 +47,11 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setRole("ROLE_USER");
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        
+        UserCreatedEvent event = new UserCreatedEvent(savedUser.getId(), savedUser.getName(), savedUser.getEmail());
+        kafkaEventProducer.sendUserCreatedEvent(String.valueOf(savedUser.getId()), event);
+        
         return ResponseEntity.ok("User registered successfully");
     }
 

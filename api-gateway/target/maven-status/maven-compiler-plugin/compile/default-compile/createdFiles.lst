@@ -1,0 +1,4 @@
+com/paypal/api_gateway/config/GatewayConfig.class
+com/paypal/api_gateway/config/AuthenticationFilter$Config.class
+com/paypal/api_gateway/config/AuthenticationFilter.class
+com/paypal/api_gateway/ApiGatewayApplication.class

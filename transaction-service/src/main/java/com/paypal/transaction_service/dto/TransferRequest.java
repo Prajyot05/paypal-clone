@@ -1,12 +1,14 @@
 package com.paypal.transaction_service.dto;
 
+import java.math.BigDecimal;
+
 public class TransferRequest {
     private Long senderId;
     private Long receiverId;
-    private Double amount;
+    private BigDecimal amount;
 
     // All-args constructor
-    public TransferRequest(Long senderId, Long receiverId, Double amount) {
+    public TransferRequest(Long senderId, Long receiverId, BigDecimal amount) {
         this.senderId = senderId;
         this.receiverId = receiverId;
         this.amount = amount;
@@ -29,11 +31,11 @@ public class TransferRequest {
         this.receiverId = receiverId;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 }
