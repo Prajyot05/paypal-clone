@@ -1,8 +1,0 @@
-com/paypal/wallet_service/WalletServiceApplication.class
-com/paypal/wallet_service/kafka/EventConsumer.class
-com/paypal/wallet_service/entity/Wallet.class
-com/paypal/wallet_service/service/WalletService.class
-com/paypal/wallet_service/entity/WalletLedgerEntry.class
-com/paypal/wallet_service/controller/WalletController.class
-com/paypal/wallet_service/repository/WalletRepository.class
-com/paypal/wallet_service/repository/WalletLedgerRepository.class
